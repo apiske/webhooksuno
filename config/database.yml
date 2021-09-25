@@ -1,0 +1,22 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  user: <%= Comff.get_str('database.user') %>
+  password: <%= Comff.get_str('database.password') %>
+  host: <%= Comff.get_str!('database.host') %>
+  database: <%= Comff.get_str!('database.name') %>
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: api2_test
+
+production:
+  <<: *default
+
+development:
+  <<: *default

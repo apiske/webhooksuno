@@ -1,0 +1,18 @@
+---
+database:
+  user: ""
+  password: ""
+  host: 127.0.0.1
+  name: api2_development
+app:
+  webapp_base_url: ""
+  github_oauth2:
+    client_id: ""
+    client_secret: ""
+  rjob:
+    url: "redis://127.0.0.1/2"
+    max_threads: 1
+    prefix: "api2rjob"
+  session_store:
+    prefix: "api2sess"
+    url: "redis://127.0.0.1/2"
