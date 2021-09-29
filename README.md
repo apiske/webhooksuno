@@ -1,24 +1,30 @@
-# README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# webhooks.uno
 
-Things you may want to cover:
+Webhooksuno is a webhook delivery software.
 
-* Ruby version
+Out of the box it offers:
 
-* System dependencies
+- Managing of subscribers [via API](https://webhooks.uno/docs)
+- Delivery auto [retry](https://webhooks.uno/docs/sending-webhooks/retrying-deliveries)
+- Tracking of delivery (and failure) status
+- Webhook messages stats
+- Horizontal scalability
+- An easy to use API for both [senders and receivers](https://webhooks.uno/docs/general/senders-and-receivers)
 
-* Configuration
+# Documentation
 
-* Database creation
+Please head over
+[the official docs](https://webhooks.uno/docs)
+for the full documentation.
 
-* Database initialization
+# License
 
-* How to run the test suite
+In short, this software is licensed under the terms of the
+[AGPL version 3.0](https://choosealicense.com/licenses/agpl-3.0/).
+Refer to the LICENSE file for more details and a copy of the license text.
 
-* Services (job queues, cache servers, search engines, etc.)
+-------
 
-* Deployment instructions
+Copyright © 2021 André Diego Piske.
 
-* ...
