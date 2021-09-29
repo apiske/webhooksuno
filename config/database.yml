@@ -6,6 +6,7 @@ default: &default
   user: <%= Comff.get_str('database.user') %>
   password: <%= Comff.get_str('database.password') %>
   host: <%= Comff.get_str!('database.host') %>
+  port: <%= Comff.get_int('database.port', 5432) %>
   database: <%= Comff.get_str!('database.name') %>
 
 # Warning: The database defined as "test" will be erased and
