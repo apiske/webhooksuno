@@ -24,7 +24,7 @@ gem 'jwt'
 gem 'redis'
 gem 'redis-session-store'
 
-gem 'rjob', '~> 0.4', '>= 0.4.4'
+gem 'rjob', '~> 0.5'
 gem 'spyderweb', path: './vendor/spyderweb'
 
 gem 'dry-types'
