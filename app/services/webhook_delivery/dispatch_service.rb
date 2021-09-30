@@ -67,6 +67,8 @@ class WebhookDelivery::DispatchService
   end
 
   def max_delivery_tentatives
+    # PT: #179758663
+    # TODO: read delivery tentatives from WebhookDefinition
     5
   end
 
