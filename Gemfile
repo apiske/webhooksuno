@@ -9,7 +9,7 @@ gem 'pg'
 # Use Puma as the app server
 gem 'puma', '~> 5.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.7'
+# gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
@@ -19,10 +19,8 @@ gem 'comff'
 gem 'oj'
 gem 'msgpack'
 gem 'multi_json'
-gem 'fog-aws'
 gem 'jwt'
 gem 'redis'
-gem 'redis-session-store'
 
 gem 'rjob', '~> 0.5'
 gem 'spyderweb', path: './vendor/spyderweb'
@@ -36,9 +34,6 @@ gem 'rack-cors'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
-
-# Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.4.4', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
