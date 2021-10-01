@@ -4,13 +4,13 @@ class ReceiverBinding < ApplicationRecord
   # 1 - enabled
   # 2 - disabled
 
-  State = Spyderweb::Bimap.create(
-    :enabled => 1,
-    :disabled => 2,
-  ).freeze
-
   STATE_ENABLED = 1
   STATE_DISABLED = 2
+
+  State = Spyderweb::Bimap.create(
+    :enabled => STATE_ENABLED,
+    :disabled => STATE_DISABLED,
+  ).freeze
 
   belongs_to :workspace
   belongs_to :router
