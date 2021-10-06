@@ -11,7 +11,9 @@ class WebhookDelivery::SubService
     @sender_workspace_id = @receiver.binding_request.workspace_id
     @workspace = @receiver.workspace
     @subscription = Subscription.find(subscription_id)
-    @request = DeliveryRequest.find(request_id)
+    @request = DeliveryRequest
+      .eager_load(:topic)
+      .find(request_id)
   end
 
   def run
@@ -30,7 +32,8 @@ class WebhookDelivery::SubService
       sender_workspace_id: @sender_workspace_id,
       receiver_workspace_id: @workspace.id,
       delivery_request: @request,
-      state: Message::State.l[:enqueued]
+      state: Message::State.l[:enqueued],
+      definition_id: @request.topic.definition_id
     )
   end
 end
