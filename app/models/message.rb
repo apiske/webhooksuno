@@ -4,6 +4,7 @@ class Message < ApplicationRecord
   belongs_to :sender_workspace, class_name: 'Workspace'
   belongs_to :receiver_workspace, class_name: 'Workspace'
   belongs_to :delivery_request
+  belongs_to :definition, class_name: "WebhookDefinition"
 
   before_create :generate_id!
 

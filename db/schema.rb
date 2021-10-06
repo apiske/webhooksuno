@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_24_132950) do
+ActiveRecord::Schema.define(version: 2021_10_05_155703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,6 +98,7 @@ ActiveRecord::Schema.define(version: 2021_09_24_132950) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "failure_code", limit: 2
     t.text "failure_message"
+    t.bigint "definition_id", null: false
   end
 
   create_table "receiver_bindings", force: :cascade do |t|
@@ -182,9 +183,10 @@ ActiveRecord::Schema.define(version: 2021_09_24_132950) do
     t.binary "public_id", null: false
     t.text "name", null: false
     t.text "description"
-    t.json "retry_policy", default: "{}", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "retry_wait_factor", default: 0, null: false
+    t.integer "retry_max_retries", default: 0, null: false
     t.index ["public_id"], name: "index_webhook_definitions_on_public_id", unique: true
     t.index ["workspace_id", "name"], name: "index_webhook_definitions_on_workspace_id_and_name", unique: true
     t.index ["workspace_id"], name: "index_webhook_definitions_on_workspace_id"
