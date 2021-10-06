@@ -4,7 +4,10 @@ class WebhookDelivery::DispatchService
   attr_reader :message
 
   def initialize(message_id, subscription_id)
-    @message = Message.find(message_id)
+    @message = Message
+      .eager_load(:definition)
+      .find(message_id)
+    @webhook_definition = @message.definition
     @subscription = Subscription
       .eager_load(:key)
       .find(subscription_id)
@@ -32,31 +35,16 @@ class WebhookDelivery::DispatchService
   private
 
   def content_type
-    'application/json'
+    "application/json"
   end
 
-  # irb(main):035:0> (1..18).each {|x| puts("%02d -> %s" % [x, beauty_time(2 ** x + 3*x + 10)]) };nil
-  #   01 -> 15s
-  #   02 -> 20s
-  #   03 -> 27s
-  #   04 -> 38s
-  #   05 -> 57s
-  #   06 -> 1m
-  #   07 -> 2m
-  #   08 -> 4m
-  #   09 -> 9m
-  #   10 -> 17m
-  #   11 -> 34m
-  #   12 -> 1h
-  #   13 -> 2h
-  #   14 -> 4h
-  #   15 -> 9h
-  #   16 -> 18h
-  #   17 -> 1d
-  #   18 -> 3d
+  def wait_factor
+    @webhook_definition.retry_wait_factor
+  end
+
   def retry_dispatch
-    tries = @message.delivery_tentatives_at.length
-    seconds_from_now = 2 ** tries + 3 * tries + rand(0..15)
+    retries = @message.delivery_tentatives_at.length
+    seconds_from_now = ((wait_factor/100.0)*30.0 + 2.0**(retries*(wait_factor / 100.0)) + rand((0...60))).ceil
 
     Rjob.schedule_in(
       seconds_from_now,
@@ -67,9 +55,7 @@ class WebhookDelivery::DispatchService
   end
 
   def max_delivery_tentatives
-    # PT: #179758663
-    # TODO: read delivery tentatives from WebhookDefinition
-    5
+    @webhook_definition.retry_max_retries + 1
   end
 
   def dispatch_message
