@@ -18,6 +18,10 @@ elif [ "$1" == "console" ]; then
   bin/rails console
 elif [ "$1" == "migrate" ]; then
   bin/rails db:migrate
+elif [ "$1" == "create-sender" ]; then
+  bin/rails uno:createsender
+elif [ "$1" == "create-receiver" ]; then
+  bin/rails uno:createreceiver
 else
-  echo "Invalid command '$1'. Must be one of: api, worker, console or migrate"
+  echo "Invalid command '$1'. Must be one of: api, worker, console, migrate, create-sender or create-receiver"
 fi
