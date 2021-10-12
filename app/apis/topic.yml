@@ -1,0 +1,31 @@
+---
+model_name: Topic
+attributes:
+  id:
+    type: string
+    model_attribute: public_uuid
+    allowed_in:
+    - serialize
+  name:
+    type: name
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+  public_description:
+    type: string
+    allowed_in:
+    - create
+    - update
+    - serialize
+  webhook_definition:
+    type: reference
+    reference_type: WebhookDefinition
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create

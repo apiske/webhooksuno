@@ -1,0 +1,35 @@
+---
+model_name: Key
+attributes:
+  id:
+    type: string
+    model_attribute: public_uuid
+    allowed_in:
+    - serialize
+  name:
+    type: name
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+  kind:
+    type: enum
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+    enum_options:
+    - hmac_sha1
+    - hmac_sha256
+    - hmac_sha512
+  content:
+    type: bytes
+    allowed_in:
+    - create
+    - update
+    required_in:
+    - create
