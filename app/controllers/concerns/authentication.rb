@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Authentication
   def check_login
     auth_header = request.headers["HTTP_AUTHORIZATION"]
