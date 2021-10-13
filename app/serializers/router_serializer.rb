@@ -12,7 +12,6 @@ class RouterSerializer < BaseSerializer
   def fields
     [
       :name,
-      :custom_attributes,
     ]
   end
 
