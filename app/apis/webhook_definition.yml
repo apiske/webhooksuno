@@ -1,0 +1,39 @@
+---
+model_name: WebhookDefinition
+attributes:
+  id:
+    type: string
+    model_attribute: public_uuid
+    allowed_in:
+    - serialize
+  name:
+    type: name
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+  description:
+    type: string
+    allowed_in:
+    - create
+    - update
+    - serialize
+  retry_wait_factor:
+    type: integer
+    integer_validation:
+      gte: 10
+      lte: 200
+    allowed_in:
+    - create
+    - update
+    - serialize
+  retry_max_retries:
+    type: integer
+    integer_validation:
+      gte: 1
+    allowed_in:
+    - create
+    - update
+    - serialize

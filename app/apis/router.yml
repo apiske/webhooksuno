@@ -1,0 +1,34 @@
+---
+model_name: Router
+attributes:
+  id:
+    type: string
+    model_attribute: public_uuid
+    allowed_in:
+    - serialize
+  name:
+    type: name
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+  tags:
+    type: reference_array
+    reference_type: Tag
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+  allowed_topics:
+    type: reference_array
+    reference_type: Topic
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create

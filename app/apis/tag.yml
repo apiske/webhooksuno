@@ -1,0 +1,16 @@
+---
+model_name: Tag
+attributes:
+  id:
+    type: string
+    model_attribute: public_uuid
+    allowed_in:
+    - serialize
+  name:
+    type: name
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
