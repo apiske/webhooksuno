@@ -13,7 +13,8 @@ class WebhookDefinitionSerializer < BaseSerializer
     [
       :name,
       :description,
-      :retry_policy
+      :retry_wait_factor,
+      :retry_max_retries
     ]
   end
 end

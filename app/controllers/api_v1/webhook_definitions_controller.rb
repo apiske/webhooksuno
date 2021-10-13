@@ -5,7 +5,7 @@ class ApiV1::WebhookDefinitionsController < ApiController
     schema do
       optional(:name).value(:string)
       optional(:description).value(:string)
-      optional(:retry_policy)
+      # optional(:retry_policy)
     end
 
     rule(:name).validate(:entity_name)
@@ -67,8 +67,8 @@ class ApiV1::WebhookDefinitionsController < ApiController
       obj.description = data[:description]
     end
 
-    if data.key?(:retry_policy)
-      obj.retry_policy = data[:retry_policy]
-    end
+    # if data.key?(:retry_policy)
+    #   obj.retry_policy = data[:retry_policy]
+    # end
   end
 end

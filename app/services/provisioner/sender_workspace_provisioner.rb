@@ -44,7 +44,9 @@ class Provisioner::SenderWorkspaceProvisioner
 
   def create_default_definition
     @webhook_definition = WebhookDefinition.new(workspace: @workspace,
-      name: 'default', retry_policy: {})
+      name: 'default',
+      retry_wait_factor: 100,
+      retry_max_retries: 20)
 
     @entities << @webhook_definition
   end
