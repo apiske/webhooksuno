@@ -38,6 +38,23 @@ class Apidef::Processor
     valid?
   end
 
+  def values_for_model
+    Hash[
+      @values.map do |name, value|
+        attr = @api_definition.attrs[name]
+        attr_name = if attr.type.is_a?(Apidef::ReferenceArrayType)
+          "#{name.singularize}_ids"
+        elsif attr.type.is_a?(Apidef::ReferenceType)
+          "#{name.singularize}_id"
+        else
+          name
+        end
+
+        [attr_name.to_sym, value]
+      end
+    ]
+  end
+
   # def warnings?
   # end
 

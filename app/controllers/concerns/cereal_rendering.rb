@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CerealRendering
   DEFAULT_SERIALIZERS = [
     TopicSerializer,
@@ -16,10 +18,10 @@ module CerealRendering
     ).cereal
   end
 
-  def render_single(obj)
+  def render_single(obj, status=200)
     c = make_cereal
     mime, body = c.render_model(obj)
-    render status: 200, body: body, content_type: mime
+    render status: status, body: body, content_type: mime
   end
 
   def render_collection(col)

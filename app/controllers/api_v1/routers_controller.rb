@@ -1,21 +1,8 @@
 # frozen_string_literal: true
 
 class ApiV1::RoutersController < ApiController
-  class RouterContract < Wh::Contracts
-    schema do
-      optional(:name).value(:string)
-      optional(:tags).array(:string)
-      optional(:allowed_topics).array(:string)
-      optional(:custom_attributes)
-    end
-
-    rule(:name).validate(:entity_name)
-    rule(:tags).validate(:uuid_or_names)
-    rule(:allowed_topics).validate(:uuid_or_names)
-    rule(:custom_attributes).validate(:custom_json)
-  end
-
   before_action :fetch_router, only: [:show, :update]
+  before_action :process_input, only: [:update, :create]
 
   def index
     render_collection(@workspace.routers.order(name: :asc).all)
@@ -26,29 +13,25 @@ class ApiV1::RoutersController < ApiController
   end
 
   def create
-    attributes = RouterContract.new.call(body_obj["data"].symbolize_keys)
-    return fail_validation!(attributes.errors) if attributes.failure?
+    @router = Router.new
+    @router.attributes = @processor.values_for_model
+    @router.workspace = @workspace
 
-    router = Router.new
-    set_router_attributes(router, attributes)
-    router.workspace = @workspace
-    router.save!
+    return unless with_common_record_checks do
+      @router.save!
+    end
 
-    render status: :created, json: {
-      data: {
-        id: router.public_uuid
-      }
-    }
+    render_single(@router, :created)
   end
 
   def update
-    attributes = RouterContract.new.call(body_obj["data"].symbolize_keys)
-    return fail_validation!(attributes.errors) if attributes.failure?
+    @router.attributes = @processor.values_for_model
 
-    set_router_attributes(@router, attributes)
-    @router.save!
+    return unless with_common_record_checks do
+      @router.save!
+    end
 
-    head 204
+    render_single(@router)
   end
 
   private
@@ -58,23 +41,7 @@ class ApiV1::RoutersController < ApiController
     @router = @workspace.routers.find_by!(public_id: uuid)
   end
 
-  def set_router_attributes(router, data)
-    if data.key?(:tags)
-      tags_query = ModelUtil.terms_query(Tag, data[:tags])
-      tag_ids = @workspace.tags.where(tags_query).select(:id).map(&:id)
-      router.tag_ids = tag_ids
-    end
-
-    if data.key?(:custom_attributes)
-      router.custom_attributes = data[:custom_attributes]
-    end
-
-    if data.key?(:allowed_topics)
-      topics_query = ModelUtil.terms_query(Topic, data[:allowed_topics])
-      topic_ids = @workspace.topics.where(topics_query).select(:id).map(&:id)
-      router.allowed_topic_ids = topic_ids
-    end
-
-    router.name = data[:name]
+  def processor_entity_name
+    :router
   end
 end

@@ -124,4 +124,45 @@ class ApiController < ApplicationController
 
     render status: :unprocessable_entity, body: MultiJson.dump(payload), content_type: 'application/json'
   end
+
+  def with_common_record_checks
+    begin
+      yield
+    rescue ActiveRecord::RecordNotUnique => e
+      if e.message =~ /violates unique constraint.+on_workspace_id_and_name/
+        render status: :conflict, body: MultiJson.dump({
+          error: "name_conflict",
+          message: "The provided name is already being used within the current workspace. Please choose a different name"
+        }), content_type: 'application/json'
+
+        return false
+      else
+        raise e
+      end
+    end
+
+    true
+  end
+
+  def api_ctx
+    @api_ctx ||= begin
+      api_ctx = Apidef::Context.new
+      api_ctx.load_api_definitions(Dir[ Rails.root.join("app/apis").to_s + "/*.yml" ])
+
+      api_ctx
+    end
+  end
+
+  def ref_solver
+    @ref_solver ||= ReferenceSolver.new(@workspace)
+  end
+
+  def process_input(*args)
+    return if fail_on_invalid_body_payload!
+
+    @processor = Apidef::Processor.new(action_name, api_ctx, processor_entity_name, ref_solver)
+    @processor.process_input(body_obj["data"])
+
+    fail_on_invalid_processor!(@processor)
+  end
 end
