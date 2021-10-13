@@ -32,8 +32,7 @@ gem 'dry-validation', '~> 1.5'
 gem 'excon'
 gem 'rack-cors'
 
-# Use Active Storage variant
-# gem 'image_processing', '~> 1.2'
+gem 'nokogiri', '>= 1.12.5'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -236,6 +236,7 @@ DEPENDENCIES
   listen (~> 3.3)
   msgpack
   multi_json
+  nokogiri (>= 1.12.5)
   oj
   pg
   pry
