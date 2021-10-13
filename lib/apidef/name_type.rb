@@ -18,4 +18,8 @@ class Apidef::NameType < Apidef::BaseType
 
     errors
   end
+
+  def raw_to_final_value(attr, raw_value, processor)
+    raw_value.downcase
+  end
 end
