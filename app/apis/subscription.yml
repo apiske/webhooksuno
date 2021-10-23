@@ -1,0 +1,53 @@
+---
+model_name: Subscription
+attributes:
+  id:
+    type: string
+    model_attribute: public_uuid
+    allowed_in:
+    - serialize
+  name:
+    type: name
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+  binding:
+    type: reference
+    model_attr_name: receiver_binding_id
+    reference_type: ReceiverBinding
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+  key:
+    type: reference
+    reference_type: Key
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+  topics:
+    type: reference_array
+    final_input_processing: false
+    reference_type: Topic
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create
+  destination_url:
+    type: string
+    allowed_in:
+    - create
+    - update
+    - serialize
+    required_in:
+    - create

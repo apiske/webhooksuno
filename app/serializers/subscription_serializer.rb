@@ -14,7 +14,6 @@ class SubscriptionSerializer < BaseSerializer
       :name,
       :destination_url,
       :state,
-      :destination_type,
       :key,
       :binding
     ]
@@ -26,6 +25,10 @@ class SubscriptionSerializer < BaseSerializer
     ]
   end
 
+  def serialize_binding(obj)
+    obj.receiver_binding.name
+  end
+
   def serialize_topics(obj)
     return [] unless obj.topic_ids.present?
 
@@ -35,19 +38,11 @@ class SubscriptionSerializer < BaseSerializer
       .select(:name, :public_id)
   end
 
-  def serialize_binding(obj)
-    obj.receiver_binding.binding_request.public_uuid
-  end
-
   def serialize_key(obj)
     obj.key.name
   end
 
   def serialize_state(obj)
     Subscription::State[obj.state]
-  end
-
-  def serialize_destination_type(obj)
-    Subscription::DestinationType[obj.destination_type]
   end
 end

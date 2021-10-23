@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_05_155703) do
+ActiveRecord::Schema.define(version: 2021_10_23_120938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,19 +30,6 @@ ActiveRecord::Schema.define(version: 2021_10_05_155703) do
     t.index ["public_id"], name: "index_api_keys_on_public_id"
     t.index ["secret"], name: "index_api_keys_on_secret", unique: true
     t.index ["workspace_id"], name: "index_api_keys_on_workspace_id"
-  end
-
-  create_table "binding_requests", force: :cascade do |t|
-    t.bigint "workspace_id", null: false
-    t.binary "public_id", null: false
-    t.bigint "router_id", null: false
-    t.integer "use_type", limit: 2, null: false
-    t.bigint "allowed_workspace_ids", array: true
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.text "message"
-    t.index ["public_id"], name: "index_binding_requests_on_public_id", unique: true
-    t.index ["workspace_id"], name: "index_binding_requests_on_workspace_id"
   end
 
   create_table "delivery_requests", force: :cascade do |t|
@@ -103,16 +90,17 @@ ActiveRecord::Schema.define(version: 2021_10_05_155703) do
 
   create_table "receiver_bindings", force: :cascade do |t|
     t.bigint "workspace_id", null: false
-    t.bigint "binding_request_id", null: false
     t.bigint "router_id", null: false
     t.integer "state", limit: 2, null: false
     t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.binary "public_id", null: false
+    t.text "name", null: false
     t.index "((deleted_at IS NULL))", name: "idx_rcv_intg_del"
-    t.index ["binding_request_id", "router_id"], name: "idx_recv_intg_reqid_rtrid", unique: true
-    t.index ["binding_request_id"], name: "index_receiver_bindings_on_binding_request_id"
+    t.index ["name"], name: "index_receiver_bindings_on_name"
     t.index ["router_id"], name: "index_receiver_bindings_on_router_id"
+    t.index ["workspace_id", "name"], name: "idx_bindings_workspace_and_name", unique: true
     t.index ["workspace_id"], name: "index_receiver_bindings_on_workspace_id"
   end
 
@@ -167,7 +155,6 @@ ActiveRecord::Schema.define(version: 2021_10_05_155703) do
     t.bigint "workspace_id", null: false
     t.binary "public_id", null: false
     t.text "name", null: false
-    t.text "internal_description"
     t.text "public_description"
     t.bigint "definition_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -185,8 +172,8 @@ ActiveRecord::Schema.define(version: 2021_10_05_155703) do
     t.text "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "retry_wait_factor", default: 0, null: false
-    t.integer "retry_max_retries", default: 0, null: false
+    t.integer "retry_wait_factor", null: false
+    t.integer "retry_max_retries", null: false
     t.index ["public_id"], name: "index_webhook_definitions_on_public_id", unique: true
     t.index ["workspace_id", "name"], name: "index_webhook_definitions_on_workspace_id_and_name", unique: true
     t.index ["workspace_id"], name: "index_webhook_definitions_on_workspace_id"

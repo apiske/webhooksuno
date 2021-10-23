@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     resources :routers
     resources :tags
     resources :webhook_definitions
-    resources :binding_requests
+    resources :receiver_bindings
 
     post 'publish', to: 'publisher#publish'
 
@@ -19,8 +19,10 @@ Rails.application.routes.draw do
 
     resources :subscriptions
 
-    get 'bindings/:code/check', to: 'bindings#check'
-    post 'bindings/:code/activate', to: 'bindings#activate'
-    get 'bindings/:binding_id/topics', to: 'bindings#index_topics'
+    resources :bindings do
+      member do
+        get :topics
+      end
+    end
   end
 end
