@@ -5,10 +5,15 @@ class Apidef::Attribute
   attr_reader :type
   attr_reader :allowed_in
   attr_reader :required_in
+  attr_reader :model_attr_name
 
   def initialize(api, name)
     @api = api
     @name = name
+  end
+
+  def load_final_input?
+    @process_final_input
   end
 
   def load_definition(defn)
@@ -16,6 +21,14 @@ class Apidef::Attribute
 
     @allowed_in = defn["allowed_in"] || {}
     @required_in = defn["required_in"] || {}
+
+    @process_final_input = defn.fetch("final_input_processing", true)
+
+    @model_attr_name = if defn.key?("model_attr_name")
+      defn["model_attr_name"]
+    else
+      guess_attribute_name
+    end.to_sym
   end
 
   def presence_required?(operation)
@@ -33,4 +46,13 @@ class Apidef::Attribute
     @api.context.create_type(type_name, defn)
   end
 
+  def guess_attribute_name
+    if type.is_a?(Apidef::ReferenceArrayType)
+      "#{name.singularize}_ids"
+    elsif type.is_a?(Apidef::ReferenceType)
+      "#{name.singularize}_id"
+    else
+      name
+    end
+  end
 end

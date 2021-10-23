@@ -38,25 +38,37 @@ class Apidef::Processor
     valid?
   end
 
+  def raw_values
+    @raw_values
+  end
+
+  def set_attr_value(attr, value)
+    @values[attr.name] = value
+  end
+
   def values_for_model
     Hash[
       @values.map do |name, value|
         attr = @api_definition.attrs[name]
-        attr_name = if attr.type.is_a?(Apidef::ReferenceArrayType)
-          "#{name.singularize}_ids"
-        elsif attr.type.is_a?(Apidef::ReferenceType)
-          "#{name.singularize}_id"
-        else
-          name
-        end
-
-        [attr_name.to_sym, value]
+        attr_name_sym = attr.model_attr_name
+        [attr_name_sym, value]
       end
     ]
   end
 
-  # def warnings?
-  # end
+  def api_definition
+    @api_definition ||= @context.get_api_definition(@api_name)
+  end
+
+  def add_error_fmt(attr, value, error_fmt)
+    error_msg = error_fmt % [attr.name]
+    @errors << [attr, error_msg]
+  end
+
+  def add_error(attr, value, error_name)
+    msg_fmt = ERROR_MESSAGES.fetch(error_name)
+    add_error_fmt(attr, value, msg_fmt)
+  end
 
   private
 
@@ -75,14 +87,10 @@ class Apidef::Processor
 
     @raw_values.each do |attr_name, raw_value|
       attr = attrs[attr_name]
+      next unless attr.load_final_input?
+
       load_final_input_values(attr, raw_value)
     end
-  end
-
-  private
-
-  def api_definition
-    @api_definition ||= @context.get_api_definition(@api_name)
   end
 
   def check_unknown_attributes
@@ -101,7 +109,7 @@ class Apidef::Processor
     final_value, err = attr.type.raw_to_final_value(attr, raw_value, self)
 
     if !err || err.empty?
-      @values[attr.name] = final_value
+      set_attr_value(attr, final_value)
     else
       err.each do |err_fmt|
         add_error_fmt(attr, raw_value, err_fmt)
@@ -134,15 +142,5 @@ class Apidef::Processor
     end
 
     false
-  end
-
-  def add_error_fmt(attr, value, error_fmt)
-    error_msg = error_fmt % [attr.name]
-    @errors << [attr, error_msg]
-  end
-
-  def add_error(attr, value, error_name)
-    msg_fmt = ERROR_MESSAGES.fetch(error_name)
-    add_error_fmt(attr, value, msg_fmt)
   end
 end

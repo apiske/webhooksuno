@@ -25,9 +25,10 @@ class Apidef::ReferenceArrayType < Apidef::BaseType
     errors
   end
 
-  def raw_to_final_value(attr, raw_value, processor)
+  def raw_to_final_value(attr, raw_value, processor, ref_solver: nil)
     errors = []
-    id_map = processor.ref_solver.map_to_ids(@reference_type, attr, raw_value)
+    ref_solver = processor.ref_solver unless ref_solver
+    id_map = ref_solver.map_to_ids(@reference_type, attr, raw_value)
     id_map.each do |ref, id|
       next if id != nil
 
