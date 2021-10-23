@@ -7,7 +7,8 @@ module CerealRendering
     RouterSerializer,
     WebhookDefinitionSerializer,
     KeySerializer,
-    SubscriptionSerializer
+    SubscriptionSerializer,
+    ReceiverBindingSerializer
   ].freeze
 
   def make_cereal

@@ -129,7 +129,7 @@ class ApiController < ApplicationController
     begin
       yield
     rescue ActiveRecord::RecordNotUnique => e
-      if e.message =~ /violates unique constraint.+on_workspace_id_and_name/
+      if e.message =~ /violates unique constraint.+workspace_(id_)?and_name/
         render status: :conflict, body: MultiJson.dump({
           error: "name_conflict",
           message: "The provided name is already being used within the current workspace. Please choose a different name"

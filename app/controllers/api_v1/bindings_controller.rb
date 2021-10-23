@@ -1,56 +1,37 @@
 # frozen_string_literal: true
 
 class ApiV1::BindingsController < ApiController
-  skip_before_action :check_login, only: [:check]
+  before_action :fetch_router, only: [:create]
+  before_action :fetch_binding, only: [:topics, :show]
 
-  before_action :fetch_binding_request_from_code, only: [:check, :activate]
-  before_action :fetch_binding_request_from_id, only: [:index_topics]
-
-  def check
-    # TODO: check whether it is actually valid or not
-
-    render json: {
-      data: {
-        status: "valid",
-        message: @binding_request.message
-      }
-    }, status: 200
-  end
-
-  def activate
+  def create
     existing_rb = @workspace.receiver_bindings
-      .find_by(binding_request_id: @binding_request.id)
+      .find_by(router_id: @router.id)
 
-    # TODO: fix race condition
+    # TODO: fix race condition [#179782548]
     if existing_rb.present?
-      return render json: {
-        data: {
-          status: "used",
-          message: "This binding has already been activated",
-          binding_id: @binding_request.public_uuid
-        }
-      }, status: 409
+      return render_single(existing_rb, :conflict)
     end
 
     ri = ReceiverBinding.new
     ri.workspace = @workspace
-    ri.binding_request = @binding_request
-    ri.router_id = @binding_request.router_id
+    ri.router_id = @router.id
     ri.state = ReceiverBinding::STATE_ENABLED
+    ri.name = body_obj["data"].fetch("name")
 
-    ri.save!
+    return unless with_common_record_checks do
+      ri.save!
+    end
 
-    render json: {
-      data: {
-        status: "valid",
-        binding_id: @binding_request.public_uuid
-      }
-    }, status: 200
+    render_single(ri, :created)
   end
 
-  def index_topics
-    rb_workspace = @binding_request.router.workspace
-    topic_names = rb_workspace.topics.all
+  def topics
+    rb_workspace = @router.workspace
+    topic_names = rb_workspace
+      .topics
+      .where(id: @router.allowed_topic_ids)
+      .all
 
     output_data = topic_names.map do |topic|
       {
@@ -65,16 +46,34 @@ class ApiV1::BindingsController < ApiController
     }, status: 200
   end
 
-  def list_bindings
+  def show
+    render_single(@receiver_binding)
+  end
+
+  def index
     bindings = @workspace
       .receiver_bindings
-      .eager_load(receiver_bindings: [ :binding_request ])
-      .where.not(receiver_bindings: { deleted_at: nil })
+      .where(receiver_bindings: { deleted_at: nil })
 
-    render_collection(@workspace.subscriptions.order(name: :asc).all)
+    render_collection(bindings)
   end
 
   private
+
+  def fetch_binding
+    uuid = UuidUtil.uuid_s_to_bin(params[:id])
+    @receiver_binding = @workspace
+      .receiver_bindings
+      .eager_load(:router)
+      .find_by!(public_id: uuid)
+
+    @router = @receiver_binding.router
+  end
+
+  def fetch_router
+    uuid = UuidUtil.uuid_s_to_bin(body_obj.dig("data", "router_id"))
+    @router = Router.find_by!(public_id: uuid)
+  end
 
   def fetch_binding_request_from_code
     code = params[:code]

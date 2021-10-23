@@ -19,8 +19,10 @@ Rails.application.routes.draw do
 
     resources :subscriptions
 
-    get 'bindings/:code/check', to: 'bindings#check'
-    post 'bindings/:code/activate', to: 'bindings#activate'
-    get 'bindings/:binding_id/topics', to: 'bindings#index_topics'
+    resources :bindings do
+      member do
+        get :topics
+      end
+    end
   end
 end
