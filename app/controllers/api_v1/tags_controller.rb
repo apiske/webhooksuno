@@ -1,15 +1,8 @@
 # frozen_string_literal: true
 
 class ApiV1::TagsController < ApiController
-  class TagContract < Wh::Contracts
-    schema do
-      optional(:name).value(:string)
-    end
-
-    rule(:name).validate(:entity_name)
-  end
-
-  before_action :fetch_tag, only: [:show]
+  before_action :fetch_tag, only: [:show, :update]
+  before_action :process_input, only: [:update, :create]
 
   def index
     render_collection(@workspace.tags.order(name: :asc).all)
@@ -20,19 +13,25 @@ class ApiV1::TagsController < ApiController
   end
 
   def create
-    attributes = TagContract.new.call(body_obj["data"].symbolize_keys)
-    return fail_validation!(attributes.errors) if attributes.failure?
+    @tag = Tag.new
+    @tag.attributes = @processor.values_for_model
+    @tag.workspace = @workspace
 
-    tag = Tag.new
-    tag.name = attributes[:name]
-    tag.workspace = @workspace
-    tag.save!
+    return unless with_common_record_checks do
+      @tag.save!
+    end
 
-    render status: :created, json: {
-      data: {
-        id: tag.public_uuid
-      }
-    }
+    render_single(@tag, :created)
+  end
+
+  def update
+    @tag.attributes = @processor.values_for_model
+
+    return unless with_common_record_checks do
+      @tag.save!
+    end
+
+    render_single(@tag)
   end
 
   private
@@ -40,5 +39,9 @@ class ApiV1::TagsController < ApiController
   def fetch_tag
     uuid = UuidUtil.uuid_s_to_bin(params[:id])
     @tag = @workspace.tags.find_by!(public_id: uuid)
+  end
+
+  def processor_entity_name
+    :tag
   end
 end
