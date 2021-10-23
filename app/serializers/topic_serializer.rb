@@ -12,7 +12,6 @@ class TopicSerializer < BaseSerializer
   def fields
     [
       :name,
-      :internal_description,
       :public_description,
       :webhook_definition
     ]
