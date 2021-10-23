@@ -15,7 +15,7 @@ class ApiV1::SubscriptionsController < ApiController
   def create
     @subscription = Subscription.new
     @subscription.attributes = @processor.values_for_model
-    @subscription.state = Subscription::State[:unverified]
+    @subscription.state = Subscription::State[:active]
     @subscription.receiver_binding = @receiver_binding
     @subscription.router = @receiver_binding.router
     @subscription.destination_type = Subscription::DestinationType[:https]
@@ -38,10 +38,6 @@ class ApiV1::SubscriptionsController < ApiController
     end
 
     return if fail_on_invalid_processor!(@processor)
-
-    if @subscription.destination_url_changed?
-      @subscription.state = Subscription::State[:unverified]
-    end
 
     return unless with_common_record_checks do
       @subscription.save!
