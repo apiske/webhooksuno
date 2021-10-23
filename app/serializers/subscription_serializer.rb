@@ -14,8 +14,8 @@ class SubscriptionSerializer < BaseSerializer
       :name,
       :destination_url,
       :state,
-      :destination_type,
-      :key
+      :key,
+      :binding
     ]
   end
 
@@ -23,6 +23,10 @@ class SubscriptionSerializer < BaseSerializer
     [
       :topics
     ]
+  end
+
+  def serialize_binding(obj)
+    obj.receiver_binding.name
   end
 
   def serialize_topics(obj)
@@ -40,9 +44,5 @@ class SubscriptionSerializer < BaseSerializer
 
   def serialize_state(obj)
     Subscription::State[obj.state]
-  end
-
-  def serialize_destination_type(obj)
-    Subscription::DestinationType[obj.destination_type]
   end
 end
