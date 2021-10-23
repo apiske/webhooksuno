@@ -1,5 +1,7 @@
 
 class ReceiverBinding < ApplicationRecord
+  include HasPublicId
+
   # States
   # 1 - enabled
   # 2 - disabled
@@ -14,7 +16,6 @@ class ReceiverBinding < ApplicationRecord
 
   belongs_to :workspace
   belongs_to :router
-  belongs_to :binding_request
 
   def enabled?
     state == STATE_ENABLED

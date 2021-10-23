@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     resources :routers
     resources :tags
     resources :webhook_definitions
-    resources :binding_requests
+    resources :receiver_bindings
 
     post 'publish', to: 'publisher#publish'
 

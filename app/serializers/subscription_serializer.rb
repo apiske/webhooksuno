@@ -15,8 +15,7 @@ class SubscriptionSerializer < BaseSerializer
       :destination_url,
       :state,
       :destination_type,
-      :key,
-      :binding
+      :key
     ]
   end
 
@@ -33,10 +32,6 @@ class SubscriptionSerializer < BaseSerializer
     Topic
       .where(id: obj.topic_ids)
       .select(:name, :public_id)
-  end
-
-  def serialize_binding(obj)
-    obj.receiver_binding.binding_request.public_uuid
   end
 
   def serialize_key(obj)

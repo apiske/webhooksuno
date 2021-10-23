@@ -7,7 +7,6 @@ module CerealRendering
     RouterSerializer,
     WebhookDefinitionSerializer,
     KeySerializer,
-    BindingRequestSerializer,
     SubscriptionSerializer
   ].freeze
 
