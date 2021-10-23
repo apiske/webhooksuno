@@ -5,10 +5,10 @@ class WebhookDelivery::SubService
 
   def initialize(subscription_id, request_id, receiver_id)
     @receiver = ReceiverBinding
-      .eager_load(:binding_request)
+      .eager_load(:router)
       .eager_load(:workspace)
       .find(receiver_id)
-    @sender_workspace_id = @receiver.binding_request.workspace_id
+    @sender_workspace_id = @receiver.router.workspace_id
     @workspace = @receiver.workspace
     @subscription = Subscription.find(subscription_id)
     @request = DeliveryRequest
