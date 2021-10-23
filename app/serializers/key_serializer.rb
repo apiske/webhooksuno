@@ -2,13 +2,9 @@
 
 class KeySerializer < BaseSerializer
   KEY_KINDS = {
-    1 => "md5",
-    2 => "sha1",
-    3 => "sha256",
-    4 => "sha384",
-    5 => "sha512",
-    6 => "private_rsa",
-    7 => "private_dsa"
+    Key::Kind.l[:hmac_sha1] => "hmac_sha1",
+    Key::Kind.l[:hmac_sha256] => "hmac_sha256",
+    Key::Kind.l[:hmac_sha512] => "hmac_sha512",
   }.freeze
 
   def model_name

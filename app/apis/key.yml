@@ -22,10 +22,10 @@ attributes:
     - serialize
     required_in:
     - create
-    enum_options:
-    - hmac_sha1
-    - hmac_sha256
-    - hmac_sha512
+    enum_map:
+      hmac_sha1: 1
+      hmac_sha256: 2
+      hmac_sha512: 3
   content:
     type: bytes
     allowed_in:

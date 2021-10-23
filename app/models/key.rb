@@ -6,21 +6,17 @@ class Key < ApplicationRecord
   has_many :subscriptions
 
   Kind = Spyderweb::Bimap.create(
-    :md5         => 1,
-    :sha1        => 2,
-    :sha256      => 3,
-    :sha384      => 4,
-    :sha512      => 5,
-    :private_rsa => 6,
-    :private_dsa => 7
+    :hmac_sha1     => 1, # HMAC-SHA-1, key size of 64 bytes, output of 20 bytes
+    :hmac_sha256   => 2, # HMAC-SHA2-256, key size of 64 bytes, output of 32 bytes
+    :hmac_sha512   => 3  # HMAC-SHA2-512, key size of 128 bytes, output of 64 bytes
   ).freeze
 
   def has_digest_capability?
-    (1..5).include?(kind)
+    (1..3).include?(kind)
   end
 
   def create_digest
-    algorithm_name = Kind.r[kind].to_s
+    algorithm_name = Kind.r[kind].to_s[5..-1]
     OpenSSL::Digest.new(algorithm_name)
   end
 end

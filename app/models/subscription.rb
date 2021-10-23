@@ -22,6 +22,7 @@ class Subscription < ApplicationRecord
   belongs_to :workspace
   belongs_to :receiver_binding
   belongs_to :key
+  belongs_to :router
 
   def router
     receiver_binding.router

@@ -98,10 +98,10 @@ class ApiController < ApplicationController
       }
     end
 
-    payload = [
+    payload = {
       error: "validation_error",
       failed_validations: failed_validations
-    ]
+    }
 
     render status: :unprocessable_entity, body: MultiJson.dump(payload), content_type: 'application/json'
 

@@ -22,6 +22,7 @@ attributes:
     - serialize
   webhook_definition:
     type: reference
+    model_attr_name: definition_id
     reference_type: WebhookDefinition
     allowed_in:
     - create
