@@ -1,28 +1,8 @@
 # frozen_string_literal: true
 
 class ApiV1::SubscriptionsController < ApiController
-  class SubscriptionContract < Wh::Contracts
-    schema do
-      optional(:name).value(:string)
-      optional(:key).value(:string)
-      optional(:topics).array(:string)
-      optional(:destination_url).value(:string)
-      # TODO: destination_type
-      # TODO: add binding_id
-    end
-
-    rule(:name).validate(:entity_name)
-    rule(:key).validate(:uuid_or_name)
-    rule(:topics).validate(:uuid_or_names)
-    rule(:destination_url) do
-      next if value.nil?
-
-      # TODO: validate URL
-    end
-  end
-
   before_action :fetch_subscription, only: [:show, :update]
-  before_action :fetch_receiver_binding, only: [:create, :update]
+  before_action :process_subscriptions_input, only: [:update, :create]
 
   def index
     render_collection(@workspace.subscriptions.order(name: :asc).all)
@@ -33,85 +13,92 @@ class ApiV1::SubscriptionsController < ApiController
   end
 
   def create
-    attributes = SubscriptionContract.new.call(body_obj["data"].symbolize_keys)
-    return fail_validation!(attributes.errors) if attributes.failure?
+    @subscription = Subscription.new
+    @subscription.attributes = @processor.values_for_model
+    @subscription.state = Subscription::State[:unverified]
+    @subscription.receiver_binding = @receiver_binding
+    @subscription.router = @receiver_binding.router
+    @subscription.destination_type = Subscription::DestinationType[:https]
+    @subscription.workspace = @workspace
 
-    subscription = Subscription.new
-    set_subscription_attributes(subscription, attributes)
+    return unless with_common_record_checks do
+      @subscription.save!
+    end
 
-    subscription.state = Subscription::State[:unverified]
-    subscription.destination_type = Subscription::DestinationType[:https]
-    subscription.workspace = @workspace
-    subscription.receiver_binding = @receiver_binding
-    subscription.router_id = @receiver_binding.router.id
-    subscription.save!
-
-    render status: :created, json: {
-      data: {
-        id: subscription.public_uuid
-      }
-    }
+    render_single(@subscription, :created)
   end
 
   def update
-    attributes = SubscriptionContract.new.call(body_obj["data"].symbolize_keys)
-    return fail_validation!(attributes.errors) if attributes.failure?
+    @subscription.attributes = @processor.values_for_model
 
-    set_subscription_attributes(@subscription, attributes)
-    @subscription.save!
+    if @subscription.receiver_binding_id_changed?
+      binding_attr = @processor.api_definition.attrs['binding']
+      @processor.add_error_fmt(binding_attr, nil,
+        "The binding attribute cannot be changed after the Subscription is created")
+    end
 
-    head 204
+    return if fail_on_invalid_processor!(@processor)
+
+    if @subscription.destination_url_changed?
+      @subscription.state = Subscription::State[:unverified]
+    end
+
+    return unless with_common_record_checks do
+      @subscription.save!
+    end
+
+    render_single(@subscription)
   end
 
   private
 
   def fetch_subscription
     uuid = UuidUtil.uuid_s_to_bin(params[:id])
+
     @subscription = @workspace.subscriptions
       .eager_load(:receiver_binding)
       .find_by!(public_id: uuid)
   end
 
-  def fetch_receiver_binding
-    if @subscription
-      @receiver_binding = @subscription.receiver_binding
-    else
-      binding_id = body_obj["data"].delete("binding_id")
-      # TODO: validate binding_id
-
-      uuid = UuidUtil.uuid_s_to_bin(binding_id)
-
-      binding_request = BindingRequest
-        .find_by!(public_id: uuid)
-
-      @receiver_binding = binding_request
-        .receiver_bindings
-        .eager_load(router: [:workspace])
-        .find_by!(workspace_id: @workspace.id)
-    end
-
-    @sender_workspace = @receiver_binding.router.workspace
+  def processor_entity_name
+    :subscription
   end
 
-  def set_subscription_attributes(router, data)
-    if data.key?(:key)
-      keys_query = ModelUtil.terms_query(Key, [data[:key]])
-      key = @workspace.keys.where(keys_query).first!
-      router.key = key
+  def process_input(*args)
+    return if fail_on_invalid_body_payload!
+
+    @processor = Apidef::Processor.new(
+      action_name,
+      api_ctx,
+      processor_entity_name,
+      ref_solver)
+    @processor.process_input(body_obj["data"])
+
+    fail_on_invalid_processor!(@processor)
+  end
+
+  def process_subscriptions_input
+    return if process_input
+
+    receiver_binding_id = @processor.values_for_model[:receiver_binding_id]
+    @receiver_binding = @workspace.receiver_bindings.find(receiver_binding_id)
+
+    @sender_workspace = @receiver_binding.router.workspace
+    topics_attr = @processor.api_definition.attrs['topics']
+    topic_ref_solver = ReferenceSolver.new(@sender_workspace)
+    topics_raw_value = @processor.raw_values['topics']
+    topic_ids, errors = topics_attr.type.raw_to_final_value(
+      topics_attr,
+      topics_raw_value,
+      @processor,
+      ref_solver: topic_ref_solver)
+
+    errors.each do |err|
+      @processor.add_error_fmt(topics_attr, topics_raw_value, err)
     end
 
-    if data.key?(:topics)
-      topics_query = ModelUtil.terms_query(Topic, data[:topics])
-      topic_ids = @sender_workspace.topics.where(topics_query).select(:id).map(&:id)
-      router.topic_ids = topic_ids
-    end
+    return if fail_on_invalid_processor!(@processor)
 
-    if data.key?(:destination_url)
-      router.destination_url = data[:destination_url]
-    end
-
-    if data.key?(:name)
-      router.name = data[:name]
-    end
+    @processor.set_attr_value(topics_attr, topic_ids)
   end
 end
