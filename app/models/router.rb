@@ -5,5 +5,4 @@ class Router < ApplicationRecord
 
   belongs_to :workspace
   has_many :receiver_bindings
-  has_many :binding_requests
 end

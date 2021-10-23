@@ -74,18 +74,4 @@ class ApiV1::BindingsController < ApiController
     uuid = UuidUtil.uuid_s_to_bin(body_obj.dig("data", "router_id"))
     @router = Router.find_by!(public_id: uuid)
   end
-
-  def fetch_binding_request_from_code
-    code = params[:code]
-    uuid = UuidUtil.uuid_s_to_bin(code)
-    @binding_request = BindingRequest.find_by!(public_id: uuid)
-  end
-
-  def fetch_binding_request_from_id
-    code = params[:binding_id]
-    uuid = UuidUtil.uuid_s_to_bin(code)
-    @binding_request = BindingRequest
-      .eager_load(router: [:workspace])
-      .find_by!(public_id: uuid)
-  end
 end
