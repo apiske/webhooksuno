@@ -15,8 +15,8 @@ Out of the box it offers:
 # Documentation
 
 Please head over
-[the official docs](https://webhooks.uno/docs)
-for the full documentation.
+[the documentation](https://webhooks.uno/docs/general/introduction)
+to get started and for the full webhooks.uno documentation.
 
 # License
 
