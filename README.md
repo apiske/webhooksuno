@@ -5,7 +5,7 @@ Webhooksuno is a webhook delivery software.
 
 Out of the box it offers:
 
-- Managing of subscribers [via API](https://webhooks.uno/docs)
+- Managing of subscribers via API
 - Delivery auto [retry](https://webhooks.uno/docs/sending-webhooks/retrying-deliveries)
 - Tracking of delivery (and failure) status
 - Webhook messages stats
