@@ -5,7 +5,7 @@ class ApiV1::WebhookDefinitionsController < ApiController
   before_action :process_input, only: [:update, :create]
 
   def index
-    render_collection(@workspace.webhook_definitions.order(name: :asc).all)
+    render_collection_paginated(@workspace.webhook_definitions)
   end
 
   def show

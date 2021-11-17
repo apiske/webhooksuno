@@ -31,7 +31,7 @@ class ApiV1::TopicsController < ApiController
   end
 
   def index
-    render_collection(@workspace.topics.all)
+    render_collection_paginated(@workspace.topics)
   end
 
   private

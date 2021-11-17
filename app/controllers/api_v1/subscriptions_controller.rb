@@ -5,7 +5,7 @@ class ApiV1::SubscriptionsController < ApiController
   before_action :process_subscriptions_input, only: [:update, :create]
 
   def index
-    render_collection(@workspace.subscriptions.order(name: :asc).all)
+    render_collection_paginated(@workspace.subscriptions)
   end
 
   def show

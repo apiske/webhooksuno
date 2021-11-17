@@ -55,7 +55,7 @@ class ApiV1::BindingsController < ApiController
       .receiver_bindings
       .where(receiver_bindings: { deleted_at: nil })
 
-    render_collection(bindings)
+    render_collection_paginated(bindings)
   end
 
   private

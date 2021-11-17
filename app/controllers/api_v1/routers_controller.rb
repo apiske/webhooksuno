@@ -5,7 +5,7 @@ class ApiV1::RoutersController < ApiController
   before_action :process_input, only: [:update, :create]
 
   def index
-    render_collection(@workspace.routers.order(name: :asc).all)
+    render_collection_paginated(@workspace.routers)
   end
 
   def show

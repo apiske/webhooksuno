@@ -5,7 +5,7 @@ class ApiV1::TagsController < ApiController
   before_action :process_input, only: [:update, :create]
 
   def index
-    render_collection(@workspace.tags.order(name: :asc).all)
+    render_collection_paginated(@workspace.tags)
   end
 
   def show

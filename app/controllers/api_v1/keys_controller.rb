@@ -11,7 +11,7 @@ class ApiV1::KeysController < ApiController
   }.freeze
 
   def index
-    render_collection(@workspace.keys.order(name: :asc).all)
+    render_collection_paginated(@workspace.keys)
   end
 
   def show
