@@ -12,4 +12,5 @@ Gem::Specification.new do |s|
   s.files       = Dir.glob('lib/**/*.rb')
 
   s.add_dependency 'zeitwerk'
+  s.add_dependency 'rbnacl', '~> 7.1'
 end

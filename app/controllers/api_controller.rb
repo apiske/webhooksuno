@@ -13,6 +13,7 @@ class ApiController < ApplicationController
   before_action :check_login
   rescue_from UuidUtil::InvalidUuidError, with: :fail_invalid_uuid!
   rescue_from ActiveRecord::RecordNotFound, with: :fail_not_found!
+  rescue_from Spyderweb::Kellogs::Cereal::CerealizationPageDataError, with: :fail_invalid_page!
   # rescue_from Spyderweb::Kellogs::Cereal::CerealizationClientError # TODO!
 
   protected
@@ -23,6 +24,15 @@ class ApiController < ApplicationController
           code: "not_found",
         }
       }, status: 404
+  end
+
+  def fail_invalid_page!
+    render json: {
+      error: {
+        code: "invalid_page",
+        message: "The page query parameter contains an invalid cursor"
+      }
+    }, status: 400
   end
 
   def fail_invalid_uuid!

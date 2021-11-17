@@ -6,6 +6,8 @@ database:
   name: api2_development
 app:
   webapp_base_url: ""
+  pagination:
+    cursor_key: "0LQ9cbpoWmGzGS0qcn6ivkzJukdmWXJJTEU+qZLn4uE="
   github_oauth2:
     client_id: ""
     client_secret: ""

@@ -7,8 +7,9 @@ database:
   port: 5432
 app:
   webapp_base_url: "http://localhost:3006"
+  pagination:
+    cursor_key: ""
   rjob:
     url: ""
     max_threads: 1
     prefix: "uno:r"
-
