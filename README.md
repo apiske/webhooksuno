@@ -1,7 +1,6 @@
+![](https://apiskedev-blog.s3.us-west-002.backblazeb2.com/assets/img/logo_rec_horizontal.png)
 
-# webhooks.uno
-
-Webhooksuno is a webhook delivery software.
+webhooks.uno is a webhook delivery software.
 
 Out of the box it offers:
 
