@@ -4,6 +4,8 @@ class ApiV1::TagsController < ApiController
   before_action :fetch_tag, only: [:show, :update]
   before_action :process_input, only: [:update, :create]
 
+  requires_workspace_capability :sender
+
   def index
     render_collection_paginated(@workspace.tags)
   end

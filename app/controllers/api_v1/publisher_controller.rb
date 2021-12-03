@@ -14,6 +14,7 @@ class ApiV1::PublisherController < ApiController
   #   rule(:allowed_topics).validate(:uuid_or_names)
   #   rule(:custom_attributes).validate(:custom_json)
   # end
+  requires_workspace_capability :sender
 
   def publish
     data = body_obj['data'].symbolize_keys

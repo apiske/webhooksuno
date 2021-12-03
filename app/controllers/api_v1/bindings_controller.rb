@@ -4,6 +4,8 @@ class ApiV1::BindingsController < ApiController
   before_action :fetch_router, only: [:create]
   before_action :fetch_binding, only: [:topics, :show]
 
+  requires_workspace_capability :receiver
+
   def create
     existing_rb = @workspace.receiver_bindings
       .find_by(router_id: @router.id)

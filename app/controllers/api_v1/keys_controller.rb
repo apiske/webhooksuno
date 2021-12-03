@@ -4,6 +4,8 @@ class ApiV1::KeysController < ApiController
   before_action :fetch_key, only: [:show, :update]
   before_action :process_input, only: [:update, :create]
 
+  requires_workspace_capability :receiver, :sender
+
   KEY_SIZES = {
     hmac_sha1: 64,
     hmac_sha256: 64,

@@ -4,6 +4,8 @@ class ApiV1::TopicsController < ApiController
   before_action :fetch_topic, only: [:show, :update]
   before_action :process_input, only: [:update, :create]
 
+  requires_workspace_capability :sender
+
   def create
     @topic = Topic.new
     @topic.attributes = @processor.values_for_model

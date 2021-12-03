@@ -4,6 +4,8 @@ class ApiV1::WebhookDefinitionsController < ApiController
   before_action :fetch_webhook_definition, only: [:show, :update]
   before_action :process_input, only: [:update, :create]
 
+  requires_workspace_capability :sender
+
   def index
     render_collection_paginated(@workspace.webhook_definitions)
   end
