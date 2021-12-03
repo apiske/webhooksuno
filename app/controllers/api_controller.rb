@@ -16,6 +16,22 @@ class ApiController < ApplicationController
   rescue_from Spyderweb::Kellogs::Cereal::CerealizationPageDataError, with: :fail_invalid_page!
   # rescue_from Spyderweb::Kellogs::Cereal::CerealizationClientError # TODO!
 
+  class << self
+    def requires_workspace_capability(*list)
+      before_action do
+        caps_met = list.any? { |cap| @workspace.has_capability?(cap) }
+        if !caps_met
+          render json: {
+            error: {
+              code: "workspace_not_allowed",
+              message: "This workspace does not allow this endpoint to be called"
+            }
+          }, status: 403
+        end
+      end
+    end
+  end
+
   protected
 
   def fail_not_found!
