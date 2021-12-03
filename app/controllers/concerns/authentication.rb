@@ -23,6 +23,8 @@ module Authentication
 
     api_key = ApiKey
       .eager_load(:workspace)
+      .where(deleted_at: nil)
+      .where('expires_at IS NULL OR expires_at > ?', Time.now)
       .find_by(secret: bin_token)
 
     return false unless api_key.present?
