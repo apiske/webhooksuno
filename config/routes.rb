@@ -25,4 +25,16 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  # Admin API
+
+  if Comff.get_bool!("admin.enabled")
+    namespace :admin, path: '/admin', module: 'api_admin' do
+      resources :workspaces do
+        member do
+          post :rotate_api_key
+        end
+      end
+    end
+  end
 end

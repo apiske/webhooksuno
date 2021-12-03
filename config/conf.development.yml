@@ -4,6 +4,11 @@ database:
   password: ""
   host: 127.0.0.1
   name: api2_development
+admin:
+  enabled: true
+  allow_from:
+    - '127.0.0.0/8'
+  auth_token: fDyRbfutO4nE5VvzYs4bdhPsUdn0Z6ECdbwXMXkkthGUNr6c
 app:
   webapp_base_url: ""
   pagination:
