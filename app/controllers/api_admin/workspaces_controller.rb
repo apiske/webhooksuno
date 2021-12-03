@@ -11,6 +11,36 @@ class ApiAdmin::WorkspacesController < AdminApiController
     render json: { data: workspaces }
   end
 
+  def create
+    data = body_obj['data']
+    errors = []
+
+    type = data['type']
+    if !%w(sender receiver).include?(type)
+      errors << "type attribute must be either sender or receiver"
+
+      return render_errors(errors)
+    end
+
+    provisioner_class = case type
+      when "receiver"
+        Provisioner::ReceiverWorkspaceProvisioner
+      when "sender"
+        Provisioner::SenderWorkspaceProvisioner
+      end
+
+    provisioner = provisioner_class.new(workspace_name: data['name'])
+    provisioner.run
+
+    render status: :created, json: {
+      data: {
+        id: provisioner.workspace.public_uuid,
+        name: provisioner.workspace.name,
+        api_key: Base64.strict_encode64(provisioner.api_key.secret)
+      }
+    }
+  end
+
   def show
     render json: { data: workspace_for_serialization(@workspace) }
   end
@@ -40,6 +70,10 @@ class ApiAdmin::WorkspacesController < AdminApiController
   end
 
   private
+
+  def render_errors(e)
+    render status: :unprocessable_entity, json: { errors: e }
+  end
 
   def workspace_for_serialization(ws)
     api_key = ws.api_keys.order(id: :desc).limit(1).where(expires_at: nil, deleted_at: nil).first
