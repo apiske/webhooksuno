@@ -7,7 +7,7 @@ database:
   port: 5432
 admin:
   enabled: false
-  allow_from: []
+  allow_from: '127.0.0.0/8,[::1]/128'
   auth_token: ''
 app:
   webapp_base_url: "http://localhost:3006"
