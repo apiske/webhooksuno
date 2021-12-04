@@ -4,6 +4,8 @@ class ApiV1::SubscriptionsController < ApiController
   before_action :fetch_subscription, only: [:show, :update]
   before_action :process_subscriptions_input, only: [:update, :create]
 
+  requires_workspace_capability :receiver
+
   def index
     render_collection_paginated(@workspace.subscriptions)
   end

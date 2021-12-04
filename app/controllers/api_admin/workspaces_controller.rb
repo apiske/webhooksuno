@@ -78,10 +78,15 @@ class ApiAdmin::WorkspacesController < AdminApiController
   def workspace_for_serialization(ws)
     api_key = ws.api_keys.order(id: :desc).limit(1).where(expires_at: nil, deleted_at: nil).first
 
+    caps = ws.capabilities.map do |cap_id|
+      Workspace::REVERSE_CAPABILITIES[cap_id]
+    end
+
     {
       id: ws.public_uuid,
       name: ws.name,
       api_key_created_at: api_key&.created_at,
+      capabilities: caps,
       created_at: ws.created_at
     }
   end

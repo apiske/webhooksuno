@@ -4,6 +4,8 @@ class ApiV1::RoutersController < ApiController
   before_action :fetch_router, only: [:show, :update]
   before_action :process_input, only: [:update, :create]
 
+  requires_workspace_capability :sender
+
   def index
     render_collection_paginated(@workspace.routers)
   end

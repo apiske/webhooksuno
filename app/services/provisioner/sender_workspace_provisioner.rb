@@ -32,6 +32,7 @@ class Provisioner::SenderWorkspaceProvisioner
 
   def create_workspace
     @workspace = Workspace.new(name: @workspace_name)
+    @workspace.set_capability(:sender, true)
 
     @entities << @workspace
   end

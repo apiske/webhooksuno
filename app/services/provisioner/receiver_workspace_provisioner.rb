@@ -28,6 +28,7 @@ class Provisioner::ReceiverWorkspaceProvisioner
 
   def create_workspace
     @workspace = Workspace.new(name: @workspace_name)
+    @workspace.set_capability(:receiver, true)
 
     @entities << @workspace
   end
