@@ -65,5 +65,5 @@ docker:
 
   ENTRYPOINT ["/uno/entrypoint.sh"]
 
-  ARG TAG
-  SAVE IMAGE webhooksuno/webhooksuno:$TAG
+  ARG TAG=a1
+  SAVE IMAGE webhooksuno/uno-alpha:$TAG
