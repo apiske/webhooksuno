@@ -16,7 +16,7 @@ build:
   COPY vendor vendor
 
   RUN apt-get update -y ; \
-      apt-get install -y libpq-dev build-essential ; \
+      apt-get install -y libpq-dev libsodium-dev build-essential ; \
       rm -rf /var/lib/apt/lists/*
 
   RUN bundle config set --local path /uno/bundle/vendor ; \
@@ -31,7 +31,7 @@ docker:
   FROM +rb
 
   RUN apt-get update -y && \
-      apt-get install -y libpq5 && \
+      apt-get install -y libpq5 libsodium23 && \
       apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false && \
       rm -rf /var/lib/apt/lists/*
 
