@@ -2,12 +2,12 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1', '>= 6.1.4.1'
+gem 'rails', '~> 6.1.6', '>= 6.1.6.1'
 gem 'tzinfo-data'
 # Use sqlite3 as the database for Active Record
 gem 'pg'
 # Use Puma as the app server
-gem 'puma', '~> 5.0'
+gem 'puma', '~> 5.6'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
@@ -20,7 +20,7 @@ gem 'oj'
 gem 'msgpack'
 gem 'multi_json'
 gem 'jwt'
-gem 'redis'
+gem 'redis', '< 5'
 
 gem 'rjob', '~> 0.5'
 gem 'spyderweb', path: './vendor/spyderweb'
@@ -33,7 +33,7 @@ gem 'excon'
 gem 'rack-cors'
 gem 'rack-attack'
 
-gem 'nokogiri', '>= 1.12.5'
+gem 'nokogiri', '>= 1.13.8'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
