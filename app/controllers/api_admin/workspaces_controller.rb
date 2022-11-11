@@ -36,7 +36,7 @@ class ApiAdmin::WorkspacesController < AdminApiController
       data: {
         id: provisioner.workspace.public_uuid,
         name: provisioner.workspace.name,
-        api_key: Base64.strict_encode64(provisioner.api_key.secret)
+        api_key: provisioner.api_key.key
       }
     }
   end
@@ -64,7 +64,7 @@ class ApiAdmin::WorkspacesController < AdminApiController
 
     render json: {
       data: {
-        secret: Base64.strict_encode64(new_api_key.secret)
+        secret: new_api_key.key
       }
     }
   end

@@ -20,7 +20,7 @@ namespace :uno do
     provisioner = Provisioner::SenderWorkspaceProvisioner.new(workspace_name: workspace_name)
     provisioner.run
 
-    api_key = Base64.urlsafe_encode64(provisioner.api_key.secret)
+    api_key = provisioner.api_key.key
 
     puts "Workspace #{workspace_name} created with ID #{provisioner.workspace.public_uuid}!"
     puts "Use the following API key to access it: #{api_key}"
@@ -46,7 +46,7 @@ namespace :uno do
     provisioner = Provisioner::ReceiverWorkspaceProvisioner.new(workspace_name: workspace_name)
     provisioner.run
 
-    api_key = Base64.urlsafe_encode64(provisioner.api_key.secret)
+    api_key = provisioner.api_key.key
 
     puts "Workspace #{workspace_name} created with ID #{provisioner.workspace.public_uuid}!"
     puts "Use the following API key to access it: #{api_key}"
