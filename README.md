@@ -1,6 +1,8 @@
 ![](https://apiskedev-blog.s3.us-west-002.backblazeb2.com/assets/img/logo_rec_horizontal.png)
 
-webhooks.uno is a webhook delivery software.
+![](https://github.com/apiske/webhooksuno/actions/workflows/ci.yml/badge.svg)
+
+webhooks.uno is a webhook delivery software. The website is also called [webhooks.uno](https://webhooks.uno).
 
 Out of the box it offers:
 
