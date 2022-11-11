@@ -1,0 +1,24 @@
+---
+database:
+  user: ""
+  password: ""
+  host: 127.0.0.1
+  name: api2_test
+admin:
+  enabled: true
+  allow_from: '127.0.0.0/8,[::1]/128'
+  auth_token: foo_admin_token
+app:
+  webapp_base_url: ""
+  pagination:
+    cursor_key: "0LQ9cbpoWmGzGS0qcn6ivkzJukdmWXJJTEU+qZLn4uE="
+  github_oauth2:
+    client_id: ""
+    client_secret: ""
+  rjob:
+    url: "redis://127.0.0.1/2"
+    max_threads: 1
+    prefix: "api2rjob_test"
+  session_store:
+    prefix: "api2sess_test"
+    url: "redis://127.0.0.1/2"
