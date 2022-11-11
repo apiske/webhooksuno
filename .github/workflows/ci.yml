@@ -43,12 +43,12 @@ jobs:
         with:
           bundler: ${{ matrix.bundler || '2.2.22' }}
           ruby-version: ${{ matrix.ruby }}
-      - name: Setup database
-        run: |
-          bundle exec db:migrate
       - name: Install dependencies
         run: |
           bundle install
+      - name: Setup database
+        run: |
+          bundle exec rails db:migrate
       - name: rspec
         run: |
           bundle exec rspec
