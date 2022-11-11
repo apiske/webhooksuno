@@ -52,7 +52,7 @@ jobs:
           bundle install
       - name: Setup database
         run: |
-          bundle exec rails db:migrate
+          bundle exec rails db:create db:migrate
       - name: rspec
         run: |
           bundle exec rspec
