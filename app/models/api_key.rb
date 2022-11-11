@@ -26,7 +26,7 @@ class ApiKey < ApplicationRecord
     secret_data = SecureRandom.bytes(32)
 
     d = OpenSSL::Digest::SHA512.new
-    d << api_key.key_salt
+    d << key_salt
     d << secret_data
 
     self.key_secret = d.digest
