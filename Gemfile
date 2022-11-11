@@ -33,7 +33,7 @@ gem 'excon'
 gem 'rack-cors'
 gem 'rack-attack'
 
-gem 'nokogiri', '>= 1.13.8'
+gem 'nokogiri', '>= 1.13.9'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
