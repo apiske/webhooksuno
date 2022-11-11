@@ -1,0 +1,63 @@
+
+name: rspec
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+  RAILS_ENV: test
+
+jobs:
+  test:
+    name: Ruby ${{ matrix.ruby }} ${{ matrix.name_extra || '' }}
+    runs-on: ${{ matrix.os || 'ubuntu-20.04' }}
+    env:
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: super
+      DATABASE_NAME: ci_db_test
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: super
+          POSTGRES_DB: ci_db_test
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379
+    strategy:
+      matrix:
+        ruby:
+          - '3.0'
+        include:
+          - ruby:
+            version: '3.1'
+            experimental: true
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler: ${{ matrix.bundler || '2.2.22' }}
+          ruby-version: ${{ matrix.ruby }}
+      - name: Install dependencies
+        run: |
+          bundle install
+      - name: Setup database
+        run: |
+          bundle exec rails db:create db:migrate
+      - name: rspec
+        run: |
+          bundle exec rspec
