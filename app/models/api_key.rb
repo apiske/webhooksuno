@@ -3,6 +3,8 @@
 class ApiKey < ApplicationRecord
   include HasPublicId
 
+  attr_reader :key
+
   belongs_to :workspace
   belongs_to :user, optional: true
 
@@ -18,6 +20,20 @@ class ApiKey < ApplicationRecord
   # ).freeze
 
   def generate_secret!
-    self.secret = SecureRandom.bytes(128)
+    self.key_id = SecureRandom.alphanumeric(32)
+    self.key_salt = SecureRandom.bytes(24)
+
+    secret_data = SecureRandom.bytes(32)
+
+    d = OpenSSL::Digest::SHA512.new
+    d << api_key.key_salt
+    d << secret_data
+
+    self.key_secret = d.digest
+
+    @key = [
+      self.key_id,
+      Base64.urlsafe_encode64(secret_data, padding: false)
+    ].join
   end
 end
