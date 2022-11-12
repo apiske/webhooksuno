@@ -19,16 +19,18 @@ ActiveRecord::Schema.define(version: 2021_12_03_221857) do
     t.bigint "workspace_id", null: false
     t.binary "public_id", null: false
     t.text "name", null: false
-    t.binary "secret", null: false
+    t.text "key_id", null: false
+    t.binary "key_secret", null: false
+    t.binary "key_salt", null: false
     t.datetime "last_used_at"
     t.datetime "expires_at"
     t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["key_id"], name: "index_api_keys_on_key_id", unique: true
     t.index ["name", "workspace_id"], name: "index_api_keys_on_name_and_workspace_id", unique: true
     t.index ["name"], name: "index_api_keys_on_name"
     t.index ["public_id"], name: "index_api_keys_on_public_id"
-    t.index ["secret"], name: "index_api_keys_on_secret", unique: true
     t.index ["workspace_id"], name: "index_api_keys_on_workspace_id"
   end
 
