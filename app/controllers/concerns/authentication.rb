@@ -57,7 +57,7 @@ module Authentication
 
     r = 0
     (0...64).each do |idx|
-       r |= (api_key.key_secret[idx] ^ digest[idx])
+       r |= (api_key.key_secret.b[idx].ord ^ digest.b[idx].ord)
     end
 
     r == 0
