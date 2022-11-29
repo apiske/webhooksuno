@@ -57,9 +57,9 @@ module Wh::StatTracker
 
     redis_url = Comff.get_str!('app.rjob.url')
     r = Redis.new(url: redis_url)
-    r.pipelined do
-      r.incr(local_key_name)
-      r.incr(global_key_name)
+    r.pipelined do |pr|
+      pr.incr(local_key_name)
+      pr.incr(global_key_name)
     end
   end
 end
