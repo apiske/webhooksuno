@@ -230,10 +230,12 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     thor (1.2.1)
+    timecop (0.9.5)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     tzinfo-data (1.2022.3)
       tzinfo (>= 1.0.0)
+    vcr (6.1.0)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -270,7 +272,9 @@ DEPENDENCIES
   rspec-rails (~> 6.0)
   spring
   spyderweb!
+  timecop
   tzinfo-data
+  vcr
 
 BUNDLED WITH
    2.3.25

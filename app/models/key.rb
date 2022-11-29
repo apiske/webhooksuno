@@ -2,6 +2,12 @@
 class Key < ApplicationRecord
   include HasPublicId
 
+  KEY_SIZES = {
+    hmac_sha1: 64,
+    hmac_sha256: 64,
+    hmac_sha512: 128
+  }.freeze
+
   belongs_to :workspace
   has_many :subscriptions
 
