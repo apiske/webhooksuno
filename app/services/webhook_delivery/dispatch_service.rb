@@ -86,6 +86,9 @@ class WebhookDelivery::DispatchService
           @message.failure_code = Message::FailureCode.l[:generic_socket_error]
         end
       else
+        # TODO: real errors could  be silenced here due to catching StandardError.
+        #       Gotta do something about it.
+
         @message.failure_code = Message::FailureCode.l[:other]
       end
 

@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://webhook.site/494b2de7-90cb-4114-915c-0b32573a7522
+    body:
+      encoding: ASCII-8BIT
+      string: Jean shorts aesthetic vegan retro gentrify. Fanny pack party whatever
+        scenester art Carles skateboard. Messenger bag lomo aesthetic yr irony. 8-bit
+        scenester photo booth beard messenger bag whatever. Organic VHS +1 single-origin
+        coffee keytar.Dreamcatcher tofu iPhone high life food truck synth chambray
+        mustache. American apparel etsy mustache artisan Austin retro +1. Organic
+        synth cardigan iPhone wolf VHS scenester vegan messenger bag. Fap jean shorts
+        art moon salvia DIY locavore Williamsburg. Cred fanny pack Portland salvia
+        tofu jean shorts.Banh mi mustache Wes Anderson vinyl Four Loko DIY thundercats
+        yr iPhone. Mcsweeney's party artisan fap you probably haven't heard of them
+        Williamsburg Austin. Sartorial leggings Wayfarers food truck skateboard mlkshk
+        ethical iPhone trust fund.
+    headers:
+      Wh-Uno-Signature:
+      - 1864269746,b80d68341c8135e305d7c8f7cd582dd05388b00f488fb3aaf1913ead32ac5f80
+      User-Agent:
+      - webhooks.uno/0.1a
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 404
+      message:
+    headers:
+      Server:
+      - nginx
+      Content-Length:
+      - 3
+      Content-Type:
+      - text/plain
+      Vary:
+      - Accept-Encoding
+      X-Request-Id:
+      - 4259c725-143e-44e2-adfe-9adaee9d4be1
+      X-Token-Id:
+      - 494b2de7-90cb-4114-915c-0b32573a7522
+      Cache-Control:
+      - no-cache, private
+      Date:
+      - Tue, 29 Nov 2022 23:19:42 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: 'foo'
+  recorded_at: Sun, 28 Jan 2029 04:42:26 GMT
+recorded_with: VCR 6.1.0

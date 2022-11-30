@@ -6,15 +6,21 @@ RSpec.describe WebhookDelivery::DispatchService do
   let(:message) { create(:message, receiver_workspace: recv_ws, sender_workspace: sender_ws) }
   let(:subscription) { create(:subscription, workspace: recv_ws, destination_url: 'https://webhook.site/494b2de7-90cb-4114-915c-0b32573a7522') }
   let(:sig_key) { subscription.key }
+  let(:vcr_cassette) { :dispatch_message_01 }
 
   describe '#run' do
     let(:send_time) { Time.at(rand(1.6e9..1.9e9).to_i) }
+
     subject(:run) do
-      VCR.use_cassette(:dispatch_message_01) do
+      VCR.use_cassette(vcr_cassette) do
         Timecop.freeze(send_time) do
           described_class.new(message.id, subscription.id).run
         end
       end
+    end
+
+    before do
+      allow(Wh::StatTracker).to receive(:incr)
     end
 
     it 'produces a valid signature' do
@@ -63,8 +69,115 @@ RSpec.describe WebhookDelivery::DispatchService do
       expect(message.delivery_tentatives_at).to eq([send_time])
     end
 
-    xit 'tracks amount of messages sent' do
-      # TODO:
+    it 'tracks amount of messages sent' do
+      run
+
+      expect(Wh::StatTracker).to have_received(:incr)
+        .with(sender_ws.id, :message_delivered).once
+
+      expect(Wh::StatTracker).to have_received(:incr)
+        .with(sender_ws.id, :dispatch_attempt).once
+    end
+
+    context 'when there is a socket error' do
+      before do
+        allow(Excon).to receive(:post).and_raise(Excon::Error::Socket.new(OpenStruct.new(message: 'the-error-msg')))
+      end
+
+      it 'does not deliver and sets failure attributes' do
+        run
+        message.reload
+
+        expect(message.failure_message).to eq('Excon::Error::Socket->the-error-msg (OpenStruct)')
+        expect(message.failure_code).to eq(Message::FailureCode.l[:generic_socket_error])
+        expect(message.delivery_tentatives_at).to eq([send_time])
+        expect(message.delivered_at).to be_nil
+        expect(message.state).to eq(Message::State.l[:enqueued])
+
+        expect(Wh::StatTracker).to have_received(:incr)
+          .with(sender_ws.id, :attempt_failed).once
+      end
+    end
+
+    context 'when there is a generic error' do
+      before do
+        allow(Excon).to receive(:post).and_raise(StandardError, 'wow-such-standard')
+      end
+
+      it 'does not deliver and sets failure attributes' do
+        run
+        message.reload
+
+        expect(message.failure_message).to eq('StandardError->wow-such-standard')
+        expect(message.failure_code).to eq(Message::FailureCode.l[:other])
+        expect(message.delivery_tentatives_at).to eq([send_time])
+        expect(message.delivered_at).to be_nil
+        expect(message.state).to eq(Message::State.l[:enqueued])
+
+        expect(Wh::StatTracker).to have_received(:incr)
+          .with(sender_ws.id, :attempt_failed).once
+      end
+    end
+
+    describe 'retrying send' do
+      before do
+        allow(Excon).to receive(:post).and_raise(StandardError, 'anything-really')
+        allow(Rjob).to receive(:schedule_in)
+        allow(Kernel).to receive(:rand).and_return(3)
+      end
+
+      it 'reschedules the job for later' do
+        run
+        message.reload
+
+        expect(message.delivery_tentatives_at).to eq([send_time])
+        expect(Rjob).to have_received(:schedule_in)
+          .with(
+            (2...62),
+            ::PublishWorker,
+            :dispatch,
+            message.id,
+            subscription.id
+          ).once
+      end
+    end
+
+    context 'when response is not 2xx' do
+      let(:vcr_cassette) { :dispatch_message_02_non_2xx }
+
+      it 'does not set the message as delivered' do
+        run
+        message.reload
+
+        expect(message.delivered_at).to be_nil
+        expect(message.state).to eq(Message::State.l[:enqueued])
+        expect(message.delivery_tentatives_at).to eq([send_time])
+      end
+
+      it 'updates message response attributes' do
+        run
+        message.reload
+
+        expect(message.response_body).to eq('foo')
+        expect(message.response_headers).to eq({
+          'Server' => 'nginx',
+          'Content-Length' => '3',
+          'Content-Type' => 'text/plain',
+          'Vary' => 'Accept-Encoding',
+          'X-Request-Id' => '4259c725-143e-44e2-adfe-9adaee9d4be1',
+          'X-Token-Id' => '494b2de7-90cb-4114-915c-0b32573a7522',
+          'Cache-Control' => 'no-cache, private',
+          'Date' => 'Tue, 29 Nov 2022 23:19:42 GMT',
+        })
+        expect(message.response_status_code).to eq(404)
+      end
+
+      it 'does not track' do
+        run
+
+        expect(Wh::StatTracker).not_to have_received(:incr)
+          .with(sender_ws.id, :message_delivered)
+      end
     end
   end
 end
