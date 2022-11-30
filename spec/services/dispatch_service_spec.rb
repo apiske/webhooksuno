@@ -140,6 +140,34 @@ RSpec.describe WebhookDelivery::DispatchService do
             subscription.id
           ).once
       end
+
+      context 'when over retry limit' do
+        before do
+          message.update_columns(delivery_tentatives_at: [
+            send_time,
+            send_time + 1.hour,
+            send_time + 2.hours,
+            send_time + 3.hours,
+            send_time + 4.hours,
+            send_time + 5.hours,
+            send_time + 6.hours
+          ])
+        end
+
+        it 'sets the message as failed' do
+          run
+          message.reload
+
+          expect(Rjob).not_to have_received(:schedule_in)
+          expect(message.delivered_at).to be_nil
+          expect(message.state).to eq(Message::State.l[:failed])
+
+          expect(Wh::StatTracker).not_to have_received(:incr)
+            .with(sender_ws.id, :attempt_failed)
+          expect(Wh::StatTracker).to have_received(:incr)
+            .with(sender_ws.id, :delivery_dead).once
+        end
+      end
     end
 
     context 'when response is not 2xx' do
