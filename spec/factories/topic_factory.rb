@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :topic do
-    is_public  
+    is_public
 
     workspace
 
-    definition { create(:webhook_definition) }
+    definition { association :webhook_definition, workspace: workspace }
   end
 end
