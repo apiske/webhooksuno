@@ -57,4 +57,5 @@ group :test do
   gem 'ffaker'
   gem 'timecop'
   gem 'vcr'
+  gem 'simplecov', require: false
 end

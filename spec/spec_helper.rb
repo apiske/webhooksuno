@@ -13,6 +13,11 @@
 # it.
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+if ENV['COVERAGE'] == '1'
+  require 'simplecov'
+  SimpleCov.start
+end
+
 require 'vcr'
 
 VCR.configure do |config|
