@@ -55,4 +55,7 @@ end
 group :test do
   gem 'factory_bot_rails', '~> 6.2'
   gem 'ffaker'
+  gem 'timecop'
+  gem 'vcr'
+  gem 'simplecov', require: false
 end

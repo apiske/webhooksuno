@@ -22,9 +22,9 @@ module ObjStatman
 
     def list_set(namespace, key, values)
       redis_key = "#{redis_base_key(namespace, key)}:v"
-      @redis_conn.pipelined do
-        @redis_conn.del(redis_key)
-        @redis_conn.lpush(redis_key, *values)
+      @redis_conn.pipelined do |pr|
+        pr.del(redis_key)
+        pr.lpush(redis_key, *values)
       end
     end
 

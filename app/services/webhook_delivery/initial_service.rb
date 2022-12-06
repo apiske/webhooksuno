@@ -17,7 +17,7 @@ class WebhookDelivery::InitialService
       state: DeliveryRequest::State.l[:processed]
     )
 
-    Wh::StatTracker.incr(@workspace.id, :request_processed)
+    Wh::StatTracker.incr(@request.workspace_id, :request_processed)
   end
 
   private

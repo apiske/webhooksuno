@@ -6,11 +6,7 @@ class ApiV1::KeysController < ApiController
 
   requires_workspace_capability :receiver, :sender
 
-  KEY_SIZES = {
-    hmac_sha1: 64,
-    hmac_sha256: 64,
-    hmac_sha512: 128
-  }.freeze
+  KEY_SIZES = Key::KEY_SIZES
 
   def index
     render_collection_paginated(@workspace.keys)
